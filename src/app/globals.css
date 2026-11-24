@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/* ── Tokens de marca ─────────────────────────────────────── */
+@theme inline {
+  --color-negro: #070707;
+  --color-carbon: #111111;
+  --color-grafito: #262626;
+  --color-hueso: #edeae3;
+  --color-hueso-suave: #c9c6bf;
+  --color-ceniza: #9a9a9a;
+  --color-rojo: #f2382c;
+
+  --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+:root {
+  --nav-h: 76px;
+  color-scheme: dark;
+}
+
+html {
+  background: var(--color-negro);
+  scroll-padding-top: var(--nav-h);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--color-negro);
+  color: var(--color-hueso);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+section[id] {
+  scroll-margin-top: var(--nav-h);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-rojo);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-rojo);
+  color: var(--color-negro);
+}
+
+/* ── Utilidades tipográficas ─────────────────────────────── */
+@utility contenedor {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 20px;
+  @media (width >= 48rem) {
+    padding-inline: 40px;
+  }
+}
+
+@utility titulo {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1.04;
+  letter-spacing: 0.015em;
+}
+
+@utility etiqueta {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+}
+
+/* ── Fondo de puntos difuminado ──────────────────────────── */
+/* Patrón SVG en mosaico (≈1.3px cada 12px): mucho más barato de pintar que un radial-gradient repetido. */
+@utility puntos {
+  --dot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='1.3' fill='%23EDEAE3' fill-opacity='0.2'/%3E%3C/svg%3E");
+  --dots-mask: radial-gradient(circle at center, #000 0%, transparent 62%);
+  background-image: var(--dot);
+  background-size: 12px 12px;
+  -webkit-mask-image: var(--dots-mask);
+  mask-image: var(--dots-mask);
+  pointer-events: none;
+}
+
+@utility puntos-rojos {
+  --dot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='1.3' fill='%23F2382C' fill-opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* ── Hero: las plagas llegan, huelen y huyen ─────────────── */
+.hero-plaga {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--size) * var(--k));
+  height: calc(var(--size) * var(--k));
+  margin: calc(var(--size) * var(--k) / -2) 0 0 calc(var(--size) * var(--k) / -2);
+  --k: 0.62;
+  --far: max(75vw, 900px);
+  opacity: 0;
+  transform: rotate(var(--a)) translateY(var(--far)) rotate(0deg);
+  animation: plaga-ciclo 10s cubic-bezier(0.45, 0, 0.25, 1) var(--delay) infinite both;
+  will-change: transform, opacity;
+}
+
+@media (width >= 48rem) {
+  .hero-plaga {
+    --k: 1;
+  }
+}
+
+.hero-plaga > span {
+  animation: plaga-antenas 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes plaga-ciclo {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(var(--far)) rotate(0deg);
+  }
+  8% {
+    opacity: 1;
+  }
+  44% {
+    transform: rotate(var(--a)) translateY(var(--near)) rotate(0deg);
+  }
+  49% {
+    transform: rotate(var(--a)) translateY(calc(var(--near) - 14px)) rotate(7deg);
+  }
+  54% {
+    transform: rotate(var(--a)) translateY(calc(var(--near) - 6px)) rotate(-7deg);
+  }
+  59% {
+    transform: rotate(var(--a)) translateY(calc(var(--near) - 18px)) rotate(7deg);
+  }
+  63% {
+    transform: rotate(var(--a)) translateY(calc(var(--near) + 30px)) rotate(180deg);
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(var(--far)) rotate(180deg);
+  }
+}
+
+@keyframes plaga-antenas {
+  from {
+    transform: rotate(-2deg);
+  }
+  to {
+    transform: rotate(2deg);
+  }
+}
+
+/* El "repelente": onda roja que sale del 24/7 */
+.hero-onda {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(70vw, 620px);
+  aspect-ratio: 1;
+  margin-left: calc(min(70vw, 620px) / -2);
+  margin-top: calc(min(70vw, 620px) / -2);
+  border: 2px solid var(--color-rojo);
+  border-radius: 9999px;
+  opacity: 0;
+  transform: scale(0.55);
+  animation: onda 10s linear var(--delay, 0s) infinite both;
+  will-change: transform, opacity;
+}
+
+@keyframes onda {
+  0%,
+  57% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  59% {
+    opacity: 0.9;
+  }
+  78%,
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-plaga {
+    animation: none;
+    opacity: 0.5;
+    transform: rotate(var(--a)) translateY(var(--near)) rotate(0deg);
+  }
+  .hero-plaga > span {
+    animation: none;
+  }
+  .hero-onda {
+    display: none;
+  }
+}
+
+/* Punto de guardia que titila */
+.titila {
+  animation: titila 1.4s ease-in-out infinite;
+}
+
+@keyframes titila {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .titila {
+    animation: none;
+  }
+}
+
+/* ── FAQ: el "+" rota al abrir ───────────────────────────── */
+details[open] .faq-mas {
+  transform: rotate(45deg);
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
